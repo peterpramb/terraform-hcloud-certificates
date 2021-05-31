@@ -10,7 +10,12 @@
 locals {
   output_certificates = [
     for cert in merge(
-      hcloud_uploaded_certificate.certificates,
+      {
+        for name, cert in hcloud_uploaded_certificate.certificates :
+          name => merge(cert, {
+            "private_key" = null
+          })
+      },
       hcloud_managed_certificate.certificates
     ) : cert
   ]
